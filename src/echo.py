@@ -20,20 +20,10 @@ class EchoHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
-    # Route all HTTP methods to the same handler
-    def do_GET(self): self.do_request()
-
-    def do_POST(self): self.do_request()
-
-    def do_PUT(self): self.do_request()
-
-    def do_DELETE(self): self.do_request()
-
-    def do_PATCH(self): self.do_request()
-
-    def do_HEAD(self): self.do_request()
-
-    def do_OPTIONS(self): self.do_request()
+    def __getattr__(self, name):
+        if name.startswith('do_'):
+            return self.do_request
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
 
 def run_server(port=8080):
